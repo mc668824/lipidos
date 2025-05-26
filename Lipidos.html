@@ -146,51 +146,56 @@
       {text:"Sobre el ácido linoleico conjugado (CLA) es correcto que:",options:["Es un trans industrial","Se forma en rumiantes y puede tener efectos benéficos","Es un ω-3 largo","Recomendado > 10 g/d"],answer:1},
     ];
 
-    const quizForm = document.getElementById("quizForm");
-    const resultDiv = document.getElementById("result");
+    const quizForm  = document.getElementById("quizForm");
+  const resultDiv = document.getElementById("result");
 
-    // Render de preguntas
-    questions.forEach((q, idx) => {
-      const wrapper = document.createElement("div");
-      wrapper.className = "question";
-      wrapper.innerHTML = `<p><strong>${idx + 1}. ${q.text}</strong></p>`;
-      const opts = document.createElement("div");
-      opts.className = "options";
-      q.options.forEach((opt, j) => {
-        const id = `q${idx}_${j}`;
-        opts.innerHTML += `
-          <label for="${id}">
-            <input type="radio" id="${id}" name="q${idx}" value="${j}"> ${opt}
-          </label>`;
-      });
-      wrapper.appendChild(opts);
-      quizForm.appendChild(wrapper);
+  // Pintamos las preguntas
+  questions.forEach((q, idx) => {
+    const wrap = document.createElement("div");
+    wrap.className = "question";
+    wrap.innerHTML = `<p><strong>${idx + 1}. ${q.text}</strong></p>`;
+    const opts = document.createElement("div");
+    opts.className = "options";
+    q.options.forEach((opt, j) => {
+      const id = `q${idx}_${j}`;
+      opts.innerHTML += `
+        <label for="${id}">
+          <input type="radio" id="${id}" name="q${idx}" value="${j}"> ${opt}
+        </label>`;
     });
+    wrap.appendChild(opts);
+    quizForm.appendChild(wrap);
+  });
 
-    document.getElementById("submitBtn").addEventListener("click", (e) => {
-      e.preventDefault();
-      let score = 0;
-      // Limpia estilos previos
-      document.querySelectorAll("label").forEach(lab=>lab.classList.remove("incorrect","correct"));
+  document.getElementById("submitBtn").addEventListener("click", e => {
+    e.preventDefault();
+    let score = 0;
 
-      questions.forEach((q, i) => {
-        const selected = quizForm[`q${i}`].value;
-        const labels = quizForm[`q${i}`].closest('.options').querySelectorAll('label');
-        if (selected !== "") {
-          if (parseInt(selected) === q.answer) {
-            score++;
-            // marca correcta
-            labels[q.answer].classList.add("correct");
-          } else {
-            // marcar incorrecto elegido
-            labels[selected].classList.add("incorrect");
-            // opcional: mostrar también correcta
-            labels[q.answer].classList.add("correct");
-          }
+    // Borra estilos de una corrección previa
+    document
+      .querySelectorAll("label")
+      .forEach(l => l.classList.remove("correct", "incorrect"));
+
+    questions.forEach((q, i) => {
+      const selected = quizForm[`q${i}`].value;           // "" si no marcó nada
+      const labels   = quizForm[`q${i}`]
+                        .closest(".options")
+                        .querySelectorAll("label");
+
+      if (selected !== "") {                             // respondió algo
+        const selIdx = parseInt(selected, 10);           // 🔑 convertir a número
+        if (selIdx === q.answer) {
+          score++;
+          labels[selIdx].classList.add("correct");       // verde
+        } else {
+          labels[selIdx].classList.add("incorrect");     // rojo
+          labels[q.answer].classList.add("correct");     // verde (opcional)
         }
-      });
-      resultDiv.textContent = `Puntuación: ${score} / ${questions.length}`;
+      }
     });
-  </script>
+
+    resultDiv.textContent = `Puntuación: ${score} / ${questions.length}`;
+  });
+</script>
 </body>
 </html>
