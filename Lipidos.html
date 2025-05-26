@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz de Lípidos</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1e40af;
+      --error: #dc2626;
+      --success: #16a34a;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      background: var(--bg);
+      display: flex;
+      justify-content: center;
+      padding: 1.5rem;
+      color: #0f172a;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      width: 100%;
+      max-width: 800px;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      text-align: center;
+      margin-bottom: 1rem;
+      color: var(--primary-dark);
+    }
+
+    .question p {
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+      line-height: 1.3;
+    }
+
+    .options label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0.6rem;
+      border-radius: 0.5rem;
+      transition: background 0.2s;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .options label:hover {
+      background: #e2e8f0;
+    }
+
+    .options input[type="radio"] {
+      accent-color: var(--primary);
+    }
+
+    button {
+      width: 100%;
+      margin-top: 1rem;
+      padding: 0.7rem;
+      border: none;
+      border-radius: 0.6rem;
+      background: var(--primary);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: var(--primary-dark);
+    }
+
+    .result {
+      margin-top: 1rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    /* feedback */
+    .incorrect {
+      color: var(--error);
+    }
+
+    .correct {
+      color: var(--success);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a;
+        --card: #1e293b;
+        --primary-dark: #60a5fa;
+      }
+      body { color: #f1f5f9; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Cuestionario de Lípidos</h1>
+    <form id="quizForm"></form>
+    <button id="submitBtn">Corregir</button>
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    const questions = [
+      {text:"¿Cuál de los siguientes lípidos se clasifica como no saponificable?",options:["Triglicérido","Fosfolípido","Cera de abeja","Colesterol"],answer:3},
+      {text:"Un ácido graso descrito como C18:3 ω-3 corresponde al:",options:["Linoleico","Araquidónico","α-Linolénico","Oleico"],answer:2},
+      {text:"La polifenol-oxidasa es relevante para comprender:",options:["Rancidez oxidativa","Pardeamiento enzimático","Saponificación","Emulsificación"],answer:1},
+      {text:"¿Qué valor energético aproximado aportan los lípidos?",options:["4 kcal g-¹","7 kcal g-¹","9 kcal g-¹","12 kcal g-¹"],answer:2},
+      {text:"Las prostaglandinas PGE₂ derivan principalmente de:",options:["EPA","Ácido araquidónico","DHA","Ácido láurico"],answer:1},
+      {text:"¿Cuál de los siguientes aceites destaca por su alto contenido en ácido oleico?",options:["Aceite de palma","Aceite de oliva","Aceite de girasol alto linoleico","Aceite de coco"],answer:1},
+      {text:"El ratio ω-6 : ω-3 dietético recomendado se sitúa entre:",options:["1 : 10 y 1 : 5","2 : 1 y 5 : 1","8 : 1 y 15 : 1","20 : 1 y 25 : 1"],answer:1},
+      {text:"Una función clave de las lecitinas es:",options:["Precursor de hormonas esteroideas","Transporte de oxígeno","Emulsión de grasas","Reserva energética inmediata"],answer:2},
+      {text:"Los triglicéridos de cadena media se caracterizan por:",options:["Depositarse rápidamente en tejido adiposo","Absorberse vía quilomicrones","Oxidarse rápidamente y pasar a vena porta","Contener siempre trans"],answer:2},
+      {text:"¿Cuál de estos ácidos grasos es saturado de cadena larga?",options:["Ácido palmítico","Ácido oleico","Ácido linoleico","Ácido EPA"],answer:0},
+      {text:"La principal causa dietética del aumento de LDL-colesterol es:",options:["Fitosteroles altos","AGS y trans en exceso","Bajo aporte de proteína","Déficit de vitamina C"],answer:1},
+      {text:"El complejo Sudán III-lípido se utiliza para:",options:["Cuantificar colesterol","Detectar almidón","Colorear grasas","Valorar rancidez"],answer:2},
+      {text:"La ingesta mínima de grasa para absorber vitaminas liposolubles se sitúa en:",options:["5 g/d","10 g/d","15-20 g/d","30-35 g/d"],answer:2},
+      {text:"¿Qué serie de ácidos grasos predomina en aceites de semillas?",options:["ω-3","ω-6","ω-7","ω-9"],answer:1},
+      {text:"El colesterol alimentario se encuentra exclusivamente en:",options:["Frutos secos","Aceites vegetales","Productos animales","Hortalizas"],answer:2},
+      {text:"Durante la hidrogenación parcial puede formarse:",options:["DHA","Glicerol","Ácidos grasos trans","Lecitina"],answer:2},
+      {text:"Una cera está formada por:",options:["Ácidos grasos + glicerol","Ácido graso + alcohol de cadena larga","Ácido graso + aminoalcohol","Esteroide + azúcares"],answer:1},
+      {text:"Los fitosteroles ayudan a:",options:["Aumentar absorción de hierro","Disminuir absorción de colesterol","Sintetizar vitamina D","Proteger el ADN"],answer:1},
+      {text:"El índice S : M : P hace referencia a:",options:["Sodio, Magnesio y Potasio","Saturados, Mono y Poliinsaturados","Selenio, Molibdeno y Plomo","Sacarosa, Maltosa y Polisacáridos"],answer:1},
+      {text:"Sobre el ácido linoleico conjugado (CLA) es correcto que:",options:["Es un trans industrial","Se forma en rumiantes y puede tener efectos benéficos","Es un ω-3 largo","Recomendado > 10 g/d"],answer:1},
+    ];
+
+    const quizForm = document.getElementById("quizForm");
+    const resultDiv = document.getElementById("result");
+
+    // Render de preguntas
+    questions.forEach((q, idx) => {
+      const wrapper = document.createElement("div");
+      wrapper.className = "question";
+      wrapper.innerHTML = `<p><strong>${idx + 1}. ${q.text}</strong></p>`;
+      const opts = document.createElement("div");
+      opts.className = "options";
+      q.options.forEach((opt, j) => {
+        const id = `q${idx}_${j}`;
+        opts.innerHTML += `
+          <label for="${id}">
+            <input type="radio" id="${id}" name="q${idx}" value="${j}"> ${opt}
+          </label>`;
+      });
+      wrapper.appendChild(opts);
+      quizForm.appendChild(wrapper);
+    });
+
+    document.getElementById("submitBtn").addEventListener("click", (e) => {
+      e.preventDefault();
+      let score = 0;
+      // Limpia estilos previos
+      document.querySelectorAll("label").forEach(lab=>lab.classList.remove("incorrect","correct"));
+
+      questions.forEach((q, i) => {
+        const selected = quizForm[`q${i}`].value;
+        const labels = quizForm[`q${i}`].closest('.options').querySelectorAll('label');
+        if (selected !== "") {
+          if (parseInt(selected) === q.answer) {
+            score++;
+            // marca correcta
+            labels[q.answer].classList.add("correct");
+          } else {
+            // marcar incorrecto elegido
+            labels[selected].classList.add("incorrect");
+            // opcional: mostrar también correcta
+            labels[q.answer].classList.add("correct");
+          }
+        }
+      });
+      resultDiv.textContent = `Puntuación: ${score} / ${questions.length}`;
+    });
+  </script>
+</body>
+</html>
