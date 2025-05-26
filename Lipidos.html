@@ -177,30 +177,37 @@
   });
 
   // ==== Corrige y muestra resultado ====
-  document.getElementById("submitBtn").addEventListener("click",e=>{
-    e.preventDefault();
-    let score=0;
-    // Limpia marcas previas
-    document.querySelectorAll("label").forEach(l=>l.classList.remove("correct","incorrect"));
+  document.getElementById("submitBtn").addEventListener("click", e => {
+  e.preventDefault();
+  let score = 0;
 
-    questions.forEach((q,i)=>{
-      const selected=quizForm[`q${i}`].value; // cadena vacía si no marcó
-      const labels=quizForm[`q${i}`].closest(".options").querySelectorAll("label");
+  // Limpia marcas previas
+  document
+    .querySelectorAll("label")
+    .forEach(l => l.classList.remove("correct", "incorrect"));
 
-      if(selected!==""){
-        const selIdx=parseInt(selected,10);
-        if(selIdx===q.answer){
-          score++;
-          labels[selIdx].classList.add("correct");
-        }else{
-          labels[selIdx].classList.add("incorrect");
-          labels[q.answer].classList.add("correct"); // mostrar opción correcta
-        }
+  questions.forEach((q, i) => {
+    const radios = quizForm.querySelectorAll(`input[name="q${i}"]`);
+    const selectedRadio = [...radios].find(r => r.checked);
+    // Todas las etiquetas del bloque
+    const labels = radios[0]
+      .closest(".options")
+      .querySelectorAll("label");
+
+    if (selectedRadio) {
+      const selIdx = parseInt(selectedRadio.value, 10);
+      if (selIdx === q.answer) {
+        score++;
+        labels[selIdx].classList.add("correct");
+      } else {
+        labels[selIdx].classList.add("incorrect");
+        labels[q.answer].classList.add("correct");
       }
-    });
-
-    resultDiv.textContent=`Puntuación: ${score} / ${questions.length}`;
+    }
   });
-  </script>
+
+  resultDiv.textContent = `Puntuación: ${score} / ${questions.length}`;
+});
+</script>
 </body>
 </html>
